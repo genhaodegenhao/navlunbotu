@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0 auto;
+				padding: 0 auto;
+			}
+			#prev{
+				width: 30px;
+				height: 30px;
+				position: absolute;
+				top: 250px;
+				left: 0px;
+				z-index: 10;
+				opacity: 0.8;
+			}
+			#next{
+				width: 30px;
+				height: 30px;
+				position: absolute;
+				top: 250px;
+				left: 470px;
+				z-index: 10;
+				opacity: 0.8;
+			}
+			#box{
+				width: 500px;
+				height: 500px;
+				overflow: hidden;
+				position: relative;
+			}
+			#box #wrap{
+				position: absolute;
+				top: 0;
+				left: 0;
+				/*overflow: hidden;*/
+				transition: all 0.5s;
+			}
+			#box #wrap div{
+				width: 500px;
+				height: 500px;
+				float: left;
+			}
+			img{
+				width: 100%;
+				height: 100%;
+				border-radius: 20px;
+			}
+			#ind{
+				width: 500px;
+				margin-top: 20px;
+				text-align: center;
+			}
+			#ind input{
+				width: 50px;
+				height: 20px;
+				margin-right: 10px;
+			}
+			.active{
+				background-color: darkcyan;
+			}
+			#tu img{
+				display: none;
+			}
+			#box:hover img{
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<div id="wrap">
+				<div class="inact"><img src="http://img102.mypsd.com.cn/20120817/1/Mypsd_176969_201208171709500279B.jpg" alt="1" /></div>
+				<div><img src="http://img2.3lian.com/2014/f5/176/d/94.jpg" alt="2" /></div>
+				<div><img src="http://pic.6188.com/upload_6188s/flashAll/s800/20120410/1334024866eBBiy2.jpg" alt="3" /></div>
+				<div><img src="http://pic.6188.com/upload_6188s/flashAll/s800/20120410/1334024866eBBiy2.jpg" alt="4" /></div>
+				<div><img src="http://i2.s1.dpfile.com/pc/3cbf2f41fede2f9f8d98f13db17d4e7a%28630c380%29/thumb.jpg" alt="5" /></div>
+			</div>
+			<div id="tu">
+				<div id="prev"><img class="img1" src="img/15.png" alt="" /></div>
+				<div id="next"><img class="img2" src="img/16.png" alt="" /></div>
+			</div>
+		</div>
+		<div id="ind">
+			<input class="active" type="button" value="图1">
+			<input type="button" value="图2">
+			<input type="button" value="图3">
+			<input type="button" value="图4">
+			<input type="button" value="图5">
+		</div>
+	</body>
+	<script>
+		//元素的获取
+		var prev=document.getElementById("prev");
+		var next=document.getElementById("next");
+		var ind=document.getElementById("ind");
+		var inputs=ind.getElementsByTagName("input");
+		var wrap=document.getElementById("wrap");
+		var divs=wrap.getElementsByTagName("div");
+//		wrap.innerHTML+=wrap.innerHTML; 
+		wrap.style.width=divs.length*box.offsetWidth+"px";//设置图片的总长度，让图片在一排
+		var index=0;
+		function nextFn(){
+			index++;
+			if(index>divs.length-1){		//判断是否大于图片个数，小于的话继续下一张，反之返回第一张
+				index=0;
+			}
+				wrap.style.left=-index*box.offsetWidth+"px";	//图片向左移动一张图片的宽度。
+				for (i=0;i<inputs.length;i++) {		//循环为了清除样式。
+					inputs[i].className="";
+				}
+				inputs[index].className="active";		//index表示按钮的坐标。
+		}
+		next.onclick=function(){		//点击prev按钮时，图片滚动
+			nextFn();
+		}
+		function prevFn(){
+			index--;
+			if(index<0){
+				index=divs.length-1;
+			}
+			wrap.style.left=-index*box.offsetWidth+"px";
+		}
+		prev.onclick=function(){
+			prevFn();
+		}
+		for (i=0;i<inputs.length;i++) {
+			inputs[i].index=i;		//自定义属性
+			inputs[i].onclick=function(){
+				for (i=0;i<inputs.length;i++) {
+					inputs[i].className="";
+				}
+				this.className="active";
+				index=this.index;
+				wrap.style.left=-this.index*box.offsetWidth+"px";
+				clearTimer();	
+			}
+		}
+			
+		//设置定时器循环
+		var timer=null;
+		function clearTimer(){
+			clearInterval(timer);
+			timer=setInterval(function(){
+			 nextFn();
+			 },1000)
+		}
+		clearTimer();
+		wrap.onmouseenter=function(){
+			clearInterval(timer);
+		}
+		wrap.onmouseleave=function(){
+			clearTimer();
+		}
+	</script>
+</html>

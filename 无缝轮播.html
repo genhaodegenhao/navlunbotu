@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>轮播图</title>
+    <style>
+    .wrap{
+        width: 900px;
+        height: 500px;
+        overflow: hidden;
+        margin: 0 auto;
+        margin-top: 50px;
+        position: relative;
+    }
+    .list{
+        position: absolute;
+        width: 5400px;      
+    }
+    img{
+        width: 900px;
+        height: 500px;
+        float: left;
+    }
+    a{
+        text-decoration: none;
+        position: absolute;
+        top:200px;
+        display: inline-block;
+        width: 85px;
+        line-height: 70px;
+        background: rgba(3,3,3,.3);
+        color: #fff;
+        font-weight: 700;
+        font-size: 50px;
+        text-align: center;
+        display: none;
+    }
+    .buttons{
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+    }
+    span{
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        display: inline-block;
+        cursor: pointer;
+        border: 1px solid #fff;
+    }
+    span~span{
+        margin-left: 20px;
+    }
+    .light{
+        background-color: #fff;
+    }
+    </style>
+</head>
+<body>
+    <div class="wrap" id="wrap">
+        <div class="list" id="list" style="left: -900px;">
+            <img src="img/13.png">
+            <img src="img/14.png">
+            <img src="img/15.png">
+            <img src="img/16.png">
+            <img src="img/19.png">
+            <img src="img/21.png">
+        </div>
+        <a href="#" id="prev"> < </a>
+        <a href="#" id="next" style="right:0"> > </a>
+        <div class="buttons" id="buttons">
+            <span index="1" class="light"></span>
+            <span index="2"></span>
+            <span index="3"></span>
+            <span index="4"></span>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+<script>
+	window.onload = function () {
+    var index = 1;
+    var switching = false; 
+
+    var prev = document.getElementById('prev');
+    var next = document.getElementById('next');
+    var list = document.getElementById('list');
+    var wrap = document.getElementById('wrap');
+    var dots = document.getElementsByTagName('span');
+    var buttons = document.getElementById('buttons');
+
+    wrap.onmouseover = function () {
+        prev.style.display = 'block';
+        next.style.display = 'block';
+        stop();
+    };
+    wrap.onmouseout = function () {
+        prev.style.display = 'none';
+        next.style.display = 'none';
+        play();
+    }
+
+    function lastImg() {
+        if (switching) {
+            return;
+        }
+        switchPic(900);
+        index--;
+        if (index < 1) {
+            index = 4;
+        }
+        else if(index  > 4) {
+            index = 1;
+        }
+        lightDot();
+    }
+
+    function nextImg() {
+        if (switching) {
+            return;
+        }
+        switchPic(-900);
+        index++;
+        if (index < 1) {
+            index = 4;
+        }
+        else if(index  > 4) {
+            index = 1;
+        }
+        lightDot();
+    }
+
+    function btn(e) {
+        if (switching) {
+            return;
+        }
+        e = window.e || e;
+        var target = e.target ? e.target: e.srcElement;
+        if (target.nodeName.toLowerCase() == 'span') {
+            var index1 = target.getAttribute('index');
+            var offset = (index - index1) * 900;
+            switchPic(offset);
+            index = index1;
+            lightDot();
+        }
+    };
+
+    // 切换图片的函数
+    function switchPic(offset) {
+        switching = true;
+        var time = 300;
+        var inter = 10; // 隔10ms切换一次
+        var speed = Math.ceil(offset/(time/inter));
+
+        var left = parseInt(list.style.left) + offset;
+
+        var go = function () {
+            var curLeft = parseInt(list.style.left);
+            if ((speed > 0 && curLeft < left) || (speed < 0 && curLeft > left)) {
+                list.style.left = curLeft + speed + 'px';
+                setTimeout(go, inter);
+            }
+            else {
+                list.style.left = left + 'px';
+                if (left < -3600) {
+                    list.style.left = -900 + 'px';
+                }
+                else if (left > -900) {
+                    list.style.left = -3600 + 'px';
+                }
+                switching = false;
+            }
+        };
+        go();
+    }
+
+    // 点亮小点
+    function lightDot() {
+        for (var i = 0, len = dots.length; i < len; i++) {
+            if (dots[i].className == 'light') {
+                dots[i].className = '';
+                break;
+            }
+        }
+        dots[index-1].className = 'light';
+    }
+
+    // 自动轮播
+    var timer;
+    var order;
+    var interval;
+    var play = function () {
+        var interval1 = interval || 2000;
+        if (order == 'prev') {
+            timer = setInterval(lastImg, interval1);
+        }
+        else {
+            timer = setInterval(nextImg, interval1);
+        }
+    };
+    var stop = function () {
+        clearInterval(timer);
+    };
+
+    // 事件绑定DOM2
+    function addEvent(element, event, listener) {
+        if (element.addEventListener) {
+            element.addEventListener(event, listener, false);
+        }
+        else {
+            element.attachEvent('on'+event, listener);
+        }
+    }
+
+
+    // 点击左右键切图
+    addEvent(prev, 'click', lastImg); 
+    addEvent(next, 'click', nextImg);
+    // 点击小点切图
+    addEvent(buttons, 'click', btn); 
+
+    // 指定切换顺序和间隔时间
+    order = 'next';
+    interval = 2000;
+
+    play();
+};
+</script>
+</html>
