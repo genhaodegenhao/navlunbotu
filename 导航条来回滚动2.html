@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style>
+			*{
+				margin: 0;
+				padding: 0;
+			}
+			#box{
+				width: 360px;
+				height: 50px;
+				line-height: 50px;
+				margin: 0 auto;
+				position: relative;
+			}
+			ul{
+				list-style: none;
+				overflow: hidden;
+				font-size: 20px;
+			}
+			li{
+				float: left;
+				margin-right: 20px;
+				cursor: pointer;
+			}
+			#move{
+				width: 40px;
+				height: 10px;
+				/*border-radius: 50%;*/
+				background-color: red;
+				position: absolute;
+				top: 50px;
+				left: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+			<ul>
+				<li>大一</li>
+				<li>大二</li>
+				<li>大三</li>
+				<li>大四</li>
+				<li>研一</li>
+				<li>研二</li>
+			</ul>
+			<div id="move" ></div>
+		</div>
+	</body>
+	<script src="js/tween.js"></script>
+	<script>
+		var box=document.getElementById("box");
+		var move=document.getElementById("move");
+		var aLi=document.getElementsByTagName("li");
+
+		var timer=null;
+		for (i=0;i<aLi.length;i++) {
+			aLi[i].index=i;
+			aLi[i].onmouseenter=function(){
+				var t=2;
+				var b=move.offsetLeft;
+				var end=this.index*(aLi[0].offsetWidth+20);
+				var c=end-b;
+				var d=100;
+				clearInterval(timer);
+				function Run(){
+					move.style.left=Tween.Back.easeOut(t,b,c,d)+"px";
+					move.style.transition = "all 0s";
+					if(t<d){
+						t+=1;
+						clearInterval(timer);
+						timer=setInterval(Run,2);
+					}
+				}
+				Run();
+			}	
+			box.onmouseleave = function(){
+				clearInterval(timer);
+					move.style.left=0+"px";
+					move.style.transition = "all .5s";
+			}
+		}
+	</script>
+</html>
